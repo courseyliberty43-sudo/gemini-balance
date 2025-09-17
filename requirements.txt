@@ -11,10 +11,10 @@ jinja2
 python-multipart
 cryptography
 sqlalchemy
-aiomysql
 aiosqlite
 databases
 python-dotenv
 apscheduler
 packaging
 psycopg2-binary
+asyncpg
