@@ -30,6 +30,7 @@ from app.log.logger import Logger
 class Settings(BaseSettings):
     # 数据库配置
     DATABASE_TYPE: str = "mysql"  # sqlite 或 mysql
+    DATABASE_URL: str = ""
     SQLITE_DATABASE: str = "default_db"
     MYSQL_HOST: str = ""
     MYSQL_PORT: int = 3306
