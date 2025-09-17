@@ -19,13 +19,26 @@ if settings.DATABASE_TYPE == "sqlite":
     data_dir.mkdir(exist_ok=True)
     db_path = data_dir / settings.SQLITE_DATABASE
     DATABASE_URL = f"sqlite:///{db_path}"
+
 elif settings.DATABASE_TYPE == "mysql":
     if settings.MYSQL_SOCKET:
         DATABASE_URL = f"mysql+pymysql://{settings.MYSQL_USER}:{quote_plus(settings.MYSQL_PASSWORD)}@/{settings.MYSQL_DATABASE}?unix_socket={settings.MYSQL_SOCKET}"
     else:
         DATABASE_URL = f"mysql+pymysql://{settings.MYSQL_USER}:{quote_plus(settings.MYSQL_PASSWORD)}@{settings.MYSQL_HOST}:{settings.MYSQL_PORT}/{settings.MYSQL_DATABASE}"
+
+elif settings.DATABASE_TYPE == "postgresql":
+    # 直接使用我们在 Render 环境变量中设置的 DATABASE_URL
+    # 并为 SQLAlchemy 添加 psycopg2 驱动标识
+    if not settings.DATABASE_URL:
+        raise ValueError("DATABASE_URL environment variable is not set for postgresql.")
+    DATABASE_URL = settings.DATABASE_URL.replace(
+        "postgresql://", "postgresql+psycopg2://"
+    )
+
 else:
-    raise ValueError("Unsupported database type. Please set DATABASE_TYPE to 'sqlite' or 'mysql'.")
+    # 更新这里的错误信息
+    raise ValueError("Unsupported database type. Please set DATABASE_TYPE to 'sqlite', 'mysql', or 'postgresql'.")
+
 
 # 创建数据库引擎
 # pool_pre_ping=True: 在从连接池获取连接前执行简单的 "ping" 测试，确保连接有效
